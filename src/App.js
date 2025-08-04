@@ -15,7 +15,7 @@ function App() {
   const fetchItems = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/items?offset=${offset}&limit=${PAGE_SIZE}`);
+      const res = await fetch(`http://search-api-backend-production.up.railway.app/api/items?offset=${offset}&limit=${PAGE_SIZE}`);
       const data = await res.json();
 
       if (data.length < PAGE_SIZE) {
