@@ -1,0 +1,47 @@
+/* src/App.css */
+.App {
+  text-align: center;
+  margin-top: 50px;
+  font-family: Arial, sans-serif;
+}
+
+input {
+  padding: 10px;
+  width: 200px;
+  font-size: 16px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin: 5px 0;
+  font-size: 18px;
+}
+
+.table-container {
+  width:80%;
+  margin: 0px auto;
+  margin-top: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+img {
+  max-width: 60px;
+  height: auto;
+}
