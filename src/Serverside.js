@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import './App.css';
 
 const PAGE_SIZE = 10;
+
+const LazyTableBody = lazy(() => import('./TableBody'));
 
 const Serverside = () => {
   const [query, setQuery] = useState('');
@@ -16,8 +18,7 @@ const Serverside = () => {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 300); // 300ms debounce
-
+    }, 300);
     return () => clearTimeout(handler);
   }, [query]);
 
@@ -29,29 +30,23 @@ const Serverside = () => {
         offset,
         limit: PAGE_SIZE
       });
-
       const res = await fetch(`https://search-api-backend-production.up.railway.app/api/items?${params.toString()}`);
       const data = await res.json();
 
-      if (data.length < PAGE_SIZE) {
-        setHasMore(false);
-      }
-
+      if (data.length < PAGE_SIZE) setHasMore(false);
       setItems(prev => [...prev, ...data]);
     } catch (err) {
       console.error('Error fetching items:', err);
     } finally {
       setLoading(false);
     }
-  }, [offset, debouncedQuery]);
+  }, [debouncedQuery, offset]);
 
-  
   useEffect(() => {
     setItems([]);
     setOffset(0);
     setHasMore(true);
   }, [debouncedQuery]);
-
 
   useEffect(() => {
     fetchItems();
@@ -92,21 +87,13 @@ const Serverside = () => {
               <th>Price ($)</th>
             </tr>
           </thead>
-          <tbody>
-            {items.map((item, idx) => {
-              const isLastItem = idx === items.length - 1;
-              return (
-                <tr key={idx} ref={isLastItem ? lastItemRef : null}>
-                  <td>{item.name}</td>
-                  <td>{item.description}</td>
-                  <td>{item.price.toFixed(2)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
+          <Suspense fallback={<tr><td colSpan="3">Loading rows...</td></tr>}>
+            <LazyTableBody items={items} lastItemRef={lastItemRef} />
+          </Suspense>
         </table>
-        {loading && <p>Loading more items...</p>}
-        {!hasMore && <p>No more items to load.</p>}
+
+        {loading && <div className="spinner"></div>}
+        {!loading && !hasMore && <p>No more items to load.</p>}
       </div>
     </div>
   );
